@@ -2,26 +2,21 @@ package com.abhi245y.whereismybus;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -38,15 +33,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
@@ -56,11 +47,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PendingResult;
@@ -70,9 +59,8 @@ import com.google.maps.model.DirectionsRoute;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 import static android.widget.Toast.LENGTH_SHORT;
 
@@ -81,23 +69,23 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
 
     public static final String TAG = "MainMapActivity";
     private GoogleMap mMap;
-    private LatLngBounds mMapBoundary;
+//    private LatLngBounds mMapBoundary;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    public String bus_num;
-    public ArrayList<String> bus_from = new ArrayList<String>();
-    public ArrayList<String> bus_to = new ArrayList<String>();
-    public DocumentReference bus;
-    public LatLng zoom;
-    public BusList busList;
-    public Marker marker;
-    public double bottomBoundary, leftBoundary, topBoundary, rightBoundary;
+//    public String bus_num;
+    public ArrayList<String> bus_from = new ArrayList<>();
+    public ArrayList<String> bus_to = new ArrayList<>();
+//    public DocumentReference bus;
+//    public LatLng zoom;
+//    public BusList busList;
+//    public Marker marker;
+//    public double bottomBoundary, leftBoundary, topBoundary, rightBoundary;
     public FirebaseAuth mAuth;
     public GeoApiContext geoApiContext = null;
-    public LatLng latLng, locuser;
+    public LatLng  locuser;
     private Handler mHandler = new Handler();
     private Runnable mRunnable;
     private static final int LOCATION_UPDATE_INTERVAL = 3000;
-    public int camZoom = 1;
+//    public int camZoom = 1;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     public int code = 122;
     public int codeFrom = 123;
@@ -110,6 +98,8 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
     public BottomSheetBehavior bottomSheetBehavior;
     public CollectionReference stopref = db.collection("Stop");
     public CollectionReference busref = db.collection("Bus List");
+
+   
 
 
     @Override
@@ -157,36 +147,27 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
 
     private void getFromAndTo() {
 
-        From.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        From.setOnClickListener(v -> {
 //                Toast.makeText(MainMapActivity.this, "On Click From", Toast.LENGTH_SHORT).show();
-                code = 123;
-                getStop();
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
-            }
+            code = 123;
+            getStop();
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
         });
 
-        To.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        To.setOnClickListener(v -> {
 //                Toast.makeText(MainMapActivity.this, "On Click To", Toast.LENGTH_SHORT).show();
-                code = 124;
-                getStop();
-            }
+            code = 124;
+            getStop();
         });
 
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(ToLocation.latitude, ToLocation.longitude), 16));
-                calculateDirections(ToLocation);
+        search.setOnClickListener(v -> {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(ToLocation.latitude, ToLocation.longitude), 16));
+            calculateDirections(ToLocation);
 //                getsearchresult();
-                getfrom();
+            getfrom();
 
 
-            }
         });
 
     }
@@ -207,17 +188,20 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
         if (requestCode == codeFrom) {
             if (resultCode == RESULT_OK) {
                 Log.i("tag", "From ActivityResult");
+                assert data != null;
                 Place place = Autocomplete.getPlaceFromIntent(data);
                 From.setText(place.getName());
                 location_name_form = place.getName();
                 FromLocation = place.getLatLng();
 
+                assert FromLocation != null;
                 mMap.addMarker(new MarkerOptions().position(FromLocation).title(location_name_form));
 
 
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                // TODO: Handle the error.
+                assert data != null;
                 Status status = Autocomplete.getStatusFromIntent(data);
+                assert status.getStatusMessage() != null;
                 Log.i("tag", status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
@@ -225,16 +209,19 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
             }
         } else if (requestCode == codeTo) {
             if (resultCode == RESULT_OK) {
+                assert data != null;
                 Place place = Autocomplete.getPlaceFromIntent(data);
                 To.setText(place.getName());
                 location_name_to = place.getName();
                 ToLocation = place.getLatLng();
 
+                assert ToLocation != null;
                 mMap.addMarker(new MarkerOptions().position(ToLocation).title(location_name_to));
 
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                // TODO: Handle the error.
+                assert data != null;
                 Status status = Autocomplete.getStatusFromIntent(data);
+                assert status.getStatusMessage() != null;
                 Log.i("tag", status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
@@ -292,32 +279,29 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
         //
          */
     private void addPolylinesToMap(final DirectionsResult result) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "run: result routes: " + result.routes.length);
+        new Handler(Looper.getMainLooper()).post(() -> {
+            Log.d(TAG, "run: result routes: " + result.routes.length);
 
-                for (DirectionsRoute route : result.routes) {
-                    Log.d(TAG, "run: leg: " + route.legs[0].toString());
-                    List<com.google.maps.model.LatLng> decodedPath = PolylineEncoding.decode(route.overviewPolyline.getEncodedPath());
+            for (DirectionsRoute route : result.routes) {
+                Log.d(TAG, "run: leg: " + route.legs[0].toString());
+                List<com.google.maps.model.LatLng> decodedPath = PolylineEncoding.decode(route.overviewPolyline.getEncodedPath());
 
-                    List<LatLng> newDecodedPath = new ArrayList<>();
+                List<LatLng> newDecodedPath = new ArrayList<>();
 
-                    // This loops through all the LatLng coordinates of ONE polyline.
-                    for (com.google.maps.model.LatLng latLng : decodedPath) {
+                // This loops through all the LatLng coordinates of ONE polyline.
+                for (com.google.maps.model.LatLng latLng : decodedPath) {
 
 //                        Log.d(TAG, "run: latlng: " + latLng.toString());
 
-                        newDecodedPath.add(new LatLng(
-                                latLng.lat,
-                                latLng.lng
-                        ));
-                    }
-                    Polyline polyline = mMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
-                    polyline.setColor(ContextCompat.getColor(getApplicationContext(), R.color.darkGrey));
-                    polyline.setClickable(true);
-
+                    newDecodedPath.add(new LatLng(
+                            latLng.lat,
+                            latLng.lng
+                    ));
                 }
+                Polyline polyline = mMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
+                polyline.setColor(ContextCompat.getColor(getApplicationContext(), R.color.darkGrey));
+                polyline.setClickable(true);
+
             }
         });
     }
@@ -325,23 +309,23 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
 
 //=====================================================================================================================================================================================================================
 
-    private void setCameraView() {
-        if (camZoom == 1) {
-            Toast.makeText(this, "Zoom", LENGTH_SHORT).show();
-            bottomBoundary = zoom.latitude - .1;
-            leftBoundary = zoom.longitude - .1;
-            topBoundary = zoom.latitude + .1;
-            rightBoundary = zoom.longitude + .1;
-            mMapBoundary = new LatLngBounds(
-                    new LatLng(bottomBoundary, leftBoundary),
-                    new LatLng(topBoundary, rightBoundary)
-            );
-
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 12));
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(zoom, 12));
-        }
-        camZoom = 2;
-    }
+//    private void setCameraView() {
+//        if (camZoom == 1) {
+//            Toast.makeText(this, "Zoom", LENGTH_SHORT).show();
+//            bottomBoundary = zoom.latitude - .1;
+//            leftBoundary = zoom.longitude - .1;
+//            topBoundary = zoom.latitude + .1;
+//            rightBoundary = zoom.longitude + .1;
+//            mMapBoundary = new LatLngBounds(
+//                    new LatLng(bottomBoundary, leftBoundary),
+//                    new LatLng(topBoundary, rightBoundary)
+//            );
+//
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 12));
+//            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(zoom, 12));
+//        }
+//        camZoom = 2;
+//    }
 //=====================================================================================================================================================================================================================
 
     /*
@@ -358,27 +342,25 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
             boolean success = mMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
             if (!success) {
+                Toast.makeText(this, "Map Style Failed", LENGTH_SHORT).show();
                 // Handle map style load failure
             }
         } catch (Resources.NotFoundException e) {
             // Oops, looks like the map style resource couldn't be found!
         }
 
-        mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                MarkerOptions mp = new MarkerOptions();
+        mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(location -> {
+            MarkerOptions mp = new MarkerOptions();
 
-                mp.position(new LatLng(location.getLatitude(), location.getLongitude()));
+            mp.position(new LatLng(location.getLatitude(), location.getLongitude()));
 
-                mp.title("my position");
+            mp.title("my position");
 
-                mMap.addMarker(mp);
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(location.getLatitude(), location.getLongitude()), 16));
-                locuser = new LatLng(location.getLatitude(), location.getLongitude());
+            mMap.addMarker(mp);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(location.getLatitude(), location.getLongitude()), 16));
+            locuser = new LatLng(location.getLatitude(), location.getLongitude());
 
-            }
         });
 
         if (geoApiContext == null) {
@@ -393,9 +375,10 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
     //
      */
 
-    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context) {
 
-        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, R.drawable.ic_car);
+        assert vectorDrawable != null;
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
 
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getMinimumWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -418,35 +401,32 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
 
 
         Toast.makeText(this, "get From initiated", LENGTH_SHORT).show();
-        stopref.whereEqualTo("bus_stop_name", location_name_form).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    StopList stopList = documentSnapshot.toObject(StopList.class);
+        stopref.whereEqualTo("bus_stop_name", location_name_form).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                StopList stopList = documentSnapshot.toObject(StopList.class);
 
-                    String stop_name = stopList.getBus_stop_name();
-                    GeoPoint bus_stop_location = stopList.getBus_stop_location();
-                    from_location.setText(stop_name);
-                    Toast.makeText(MainMapActivity.this, "Bus Stop Name From " + stop_name, LENGTH_SHORT).show();
-                    Toast.makeText(MainMapActivity.this, "Bus Stop Location From " + bus_stop_location, LENGTH_SHORT).show();
+                String stop_name = stopList.getBus_stop_name();
+                GeoPoint bus_stop_location = stopList.getBus_stop_location();
+                from_location.setText(stop_name);
+                Toast.makeText(MainMapActivity.this, "Bus Stop Name From " + stop_name, LENGTH_SHORT).show();
+                Toast.makeText(MainMapActivity.this, "Bus Stop Location From " + bus_stop_location, LENGTH_SHORT).show();
 
-                    //                    Toast.makeText(MainMapActivity.this,  bus_that_come_here, Toast.LENGTH_SHORT).show();
-                    //                        ArrayList<String> buslist=  new ArrayList<String>();
-                    //                        buslist.add(bus_that_come_here);
-                    if (bus_from.isEmpty()) {
+                //                    Toast.makeText(MainMapActivity.this,  bus_that_come_here, Toast.LENGTH_SHORT).show();
+                //                        ArrayList<String> buslist=  new ArrayList<String>();
+                //                        buslist.add(bus_that_come_here);
+                if (bus_from.isEmpty()) {
 
-                        bus_from.addAll(stopList.getBus_that_come_here());
+                    bus_from.addAll(stopList.getBus_that_come_here());
 
-                    } else {
+                } else {
 
-                        bus_from.clear();
-                        bus_from.addAll(stopList.getBus_that_come_here());
+                    bus_from.clear();
+                    bus_from.addAll(stopList.getBus_that_come_here());
 
-                    }
-
-                    Log.d(TAG, "Bus From Array" + bus_from);
-                    getsearchresult();
                 }
+
+                Log.d(TAG, "Bus From Array" + bus_from);
+                getsearchresult();
             }
         });
     }
@@ -454,33 +434,34 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
     public void getsearchresult() {
 
         Toast.makeText(this, "result Function Initiated", LENGTH_SHORT).show();
-        stopref.whereEqualTo("bus_stop_name", location_name_to).whereArrayContainsAny("bus_that_come_here", bus_from).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    StopList stopList = documentSnapshot.toObject(StopList.class);
-                    Toast.makeText(MainMapActivity.this, "Success", LENGTH_SHORT).show();
-                    String stop_name_to = stopList.getBus_stop_name();
-                    GeoPoint bus_stop_location = stopList.getBus_stop_location();
-                    to_loccation.setText(stop_name_to);
-                    Toast.makeText(MainMapActivity.this, "Bus Stop Name To " + stop_name_to, LENGTH_SHORT).show();
-                    Toast.makeText(MainMapActivity.this, "Bus Stop Location To " + bus_stop_location, LENGTH_SHORT).show();
+        stopref.whereEqualTo("bus_stop_name", location_name_to).whereArrayContainsAny("bus_that_come_here", bus_from).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                StopList stopList = documentSnapshot.toObject(StopList.class);
+                Toast.makeText(MainMapActivity.this, "Success", LENGTH_SHORT).show();
+                String stop_name_to = stopList.getBus_stop_name();
+                GeoPoint bus_stop_location = stopList.getBus_stop_location();
+                to_loccation.setText(stop_name_to);
+                Toast.makeText(MainMapActivity.this, "Bus Stop Name To " + stop_name_to, LENGTH_SHORT).show();
+                Toast.makeText(MainMapActivity.this, "Bus Stop Location To " + bus_stop_location, LENGTH_SHORT).show();
 
 
-                    //                        Toast.makeText(MainMapActivity.this,  bus_that_come_here, Toast.LENGTH_SHORT).show();
-                    //                        ArrayList<String> buslist = new ArrayList<String>();
-                    //                        buslist.add(bus_that_come_here);
-                    //                        buslist.stream().filter(bus_from::contains).collect(Collectors.toList());
-                    if (bus_to.isEmpty()){
-                        bus_to.addAll(stopList.getBus_that_come_here());
-                    }
-                    else{
-                        bus_to.clear();
-                        bus_to.addAll(stopList.getBus_that_come_here());
-                    }
-                    bus_to.retainAll(bus_from);
-                    Log.d(TAG, "Bus To Common Array" + bus_to);
+                //                        Toast.makeText(MainMapActivity.this,  bus_that_come_here, Toast.LENGTH_SHORT).show();
+                //                        ArrayList<String> buslist = new ArrayList<String>();
+                //                        buslist.add(bus_that_come_here);
+                //                        buslist.stream().filter(bus_from::contains).collect(Collectors.toList());
+                if (bus_to.isEmpty()){
+
+                    bus_to.addAll(stopList.getBus_that_come_here());
+
+                }
+                else{
+
+                    bus_to.clear();
+                    bus_to.addAll(stopList.getBus_that_come_here());
+
+                }
+                bus_to.retainAll(bus_from);
+                Log.d(TAG, "Bus To Common Array" + bus_to);
 
 //                    StringBuilder builder = new StringBuilder();
 //                    for (String value : bus_to) {
@@ -488,25 +469,22 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
 //                    }
 //
 //                    String common_bus_number = builder.toString();
-                    String common_bus_number = bus_to.toString().replace("[", "").replace("]", "");
+                String common_bus_number = bus_to.toString().replace("[", "").replace("]", "");
 
-                    common_bus.setText(common_bus_number);
+                common_bus.setText(common_bus_number);
 
-                    busref.whereEqualTo("bus_no", common_bus_number).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                                Toast.makeText(MainMapActivity.this, "common Bus initialed", LENGTH_SHORT).show();
-                                BusList busListC = documentSnapshot.toObject(BusList.class);
+                busref.whereEqualTo("bus_no", common_bus_number).get().addOnSuccessListener(queryDocumentSnapshots1 -> {
+                    for (QueryDocumentSnapshot documentSnapshot1 : queryDocumentSnapshots1) {
+                        Toast.makeText(MainMapActivity.this, "common Bus initialed", LENGTH_SHORT).show();
+                        BusList busListC = documentSnapshot1.toObject(BusList.class);
 
-                                GeoPoint selected_bus = busListC.getBus_location();
+                        GeoPoint selected_bus = busListC.getBus_location();
 
-                                LatLng latLng = new LatLng(selected_bus.getLatitude(), selected_bus.getLongitude());
-                                Toast.makeText(MainMapActivity.this, "Common Bus Location" + latLng, LENGTH_SHORT).show();
-                                mMap.addMarker(new MarkerOptions().position(latLng).title("Common Bus" + common_bus_number).icon(bitmapDescriptorFromVector(getApplicationContext(), R.drawable.ic_car)));
-                            }
-                        }
-                    });
+                        LatLng latLng = new LatLng(selected_bus.getLatitude(), selected_bus.getLongitude());
+                        Toast.makeText(MainMapActivity.this, "Common Bus Location" + latLng, LENGTH_SHORT).show();
+                        mMap.addMarker(new MarkerOptions().position(latLng).title("Common Bus" + common_bus_number).icon(bitmapDescriptorFromVector(getApplicationContext())));
+                    }
+                });
 
 //                    for (String bus_that_come_here : stopList.getBus_that_come_here()) {
 ////                    Toast.makeText(MainMapActivity.this,  bus_that_come_here, Toast.LENGTH_SHORT).show();
@@ -515,9 +493,8 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
 //                        String bus_found=  bus_to.toString();
 //                        Toast.makeText(MainMapActivity.this, "Bus Found: "+bus_found, LENGTH_SHORT).show();
 //                    }
-                }
-
             }
+
         });
     }
 
@@ -610,13 +587,10 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
 
     private void startUserLocationsRunnable() {
         Log.d(TAG, "startUserLocationsRunnable: starting runnable for retrieving updated locations.");
-        mHandler.postDelayed(mRunnable = new Runnable() {
-            @Override
-            public void run() {
+        mHandler.postDelayed(mRunnable = () -> {
 //                Toast.makeText(MainMapActivity.this, "Auto Refreshed", Toast.LENGTH_SHORT).show();
 //                getBusNumber();
-                mHandler.postDelayed(mRunnable, LOCATION_UPDATE_INTERVAL);
-            }
+            mHandler.postDelayed(mRunnable, LOCATION_UPDATE_INTERVAL);
         }, LOCATION_UPDATE_INTERVAL);
     }
 
@@ -630,17 +604,11 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(marker.getSnippet())
                 .setCancelable(true).setMessage("Hi You have clicked on: " + marker.getTitle())
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                .setPositiveButton("Yes", (dialog, id) -> {
 //                        calculateDirections(marker);
-                        dialog.dismiss();
-                    }
+                    dialog.dismiss();
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.cancel();
-                    }
-                });
+                .setNegativeButton("No", (dialog, id) -> dialog.cancel());
         final AlertDialog alert = builder.create();
         alert.show();
     }
