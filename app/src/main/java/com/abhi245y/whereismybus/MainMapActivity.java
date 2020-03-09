@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,7 +19,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -41,7 +44,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
@@ -67,6 +72,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
@@ -78,9 +84,8 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
     private LatLngBounds mMapBoundary;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     public String bus_num;
-    public List<String> bus_from;
-    public List<String> bus_to;
-    public List<String> bus_list;
+    public ArrayList<String> bus_from = new ArrayList<String>();
+    public ArrayList<String> bus_to = new ArrayList<String>();
     public DocumentReference bus;
     public LatLng zoom;
     public BusList busList;
@@ -369,8 +374,8 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
                 mp.title("my position");
 
                 mMap.addMarker(mp);
-//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-//                        new LatLng(location.getLatitude(), location.getLongitude()), 16));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(location.getLatitude(), location.getLongitude()), 16));
                 locuser = new LatLng(location.getLatitude(), location.getLongitude());
 
             }
@@ -425,11 +430,22 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
                     Toast.makeText(MainMapActivity.this, "Bus Stop Name From " + stop_name, LENGTH_SHORT).show();
                     Toast.makeText(MainMapActivity.this, "Bus Stop Location From " + bus_stop_location, LENGTH_SHORT).show();
 
-                    for (String bus_that_come_here : stopList.getBus_that_come_here()) {
-//                    Toast.makeText(MainMapActivity.this,  bus_that_come_here, Toast.LENGTH_SHORT).show();
-                        bus_from = Arrays.asList(bus_that_come_here);
-                        getsearchresult();
+                    //                    Toast.makeText(MainMapActivity.this,  bus_that_come_here, Toast.LENGTH_SHORT).show();
+                    //                        ArrayList<String> buslist=  new ArrayList<String>();
+                    //                        buslist.add(bus_that_come_here);
+                    if (bus_from.isEmpty()) {
+
+                        bus_from.addAll(stopList.getBus_that_come_here());
+
+                    } else {
+
+                        bus_from.clear();
+                        bus_from.addAll(stopList.getBus_that_come_here());
+
                     }
+
+                    Log.d(TAG, "Bus From Array" + bus_from);
+                    getsearchresult();
                 }
             }
         });
@@ -438,7 +454,8 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
     public void getsearchresult() {
 
         Toast.makeText(this, "result Function Initiated", LENGTH_SHORT).show();
-        stopref.whereEqualTo("bus_stop_name", location_name_to).whereArrayContainsAny("bus_that_come_here",bus_from).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        stopref.whereEqualTo("bus_stop_name", location_name_to).whereArrayContainsAny("bus_that_come_here", bus_from).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
@@ -447,13 +464,50 @@ public class MainMapActivity extends FragmentActivity implements OnMapReadyCallb
                     String stop_name_to = stopList.getBus_stop_name();
                     GeoPoint bus_stop_location = stopList.getBus_stop_location();
                     to_loccation.setText(stop_name_to);
-                    Toast.makeText(MainMapActivity.this, "Bus Stop Name From " + stop_name_to, LENGTH_SHORT).show();
-                    Toast.makeText(MainMapActivity.this, "Bus Stop Location From " + bus_stop_location, LENGTH_SHORT).show();
+                    Toast.makeText(MainMapActivity.this, "Bus Stop Name To " + stop_name_to, LENGTH_SHORT).show();
+                    Toast.makeText(MainMapActivity.this, "Bus Stop Location To " + bus_stop_location, LENGTH_SHORT).show();
 
-                    for (String bus_that_come_here : stopList.getBus_that_come_here()) {
-                        Toast.makeText(MainMapActivity.this,  bus_that_come_here, Toast.LENGTH_SHORT).show();
-                        bus_to = Arrays.asList(bus_that_come_here);
+
+                    //                        Toast.makeText(MainMapActivity.this,  bus_that_come_here, Toast.LENGTH_SHORT).show();
+                    //                        ArrayList<String> buslist = new ArrayList<String>();
+                    //                        buslist.add(bus_that_come_here);
+                    //                        buslist.stream().filter(bus_from::contains).collect(Collectors.toList());
+                    if (bus_to.isEmpty()){
+                        bus_to.addAll(stopList.getBus_that_come_here());
                     }
+                    else{
+                        bus_to.clear();
+                        bus_to.addAll(stopList.getBus_that_come_here());
+                    }
+                    bus_to.retainAll(bus_from);
+                    Log.d(TAG, "Bus To Common Array" + bus_to);
+
+//                    StringBuilder builder = new StringBuilder();
+//                    for (String value : bus_to) {
+//                        builder.append(value);
+//                    }
+//
+//                    String common_bus_number = builder.toString();
+                    String common_bus_number = bus_to.toString().replace("[", "").replace("]", "");
+
+                    common_bus.setText(common_bus_number);
+
+                    busref.whereEqualTo("bus_no", common_bus_number).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                                Toast.makeText(MainMapActivity.this, "common Bus initialed", LENGTH_SHORT).show();
+                                BusList busListC = documentSnapshot.toObject(BusList.class);
+
+                                GeoPoint selected_bus = busListC.getBus_location();
+
+                                LatLng latLng = new LatLng(selected_bus.getLatitude(), selected_bus.getLongitude());
+                                Toast.makeText(MainMapActivity.this, "Common Bus Location" + latLng, LENGTH_SHORT).show();
+                                mMap.addMarker(new MarkerOptions().position(latLng).title("Common Bus" + common_bus_number).icon(bitmapDescriptorFromVector(getApplicationContext(), R.drawable.ic_car)));
+                            }
+                        }
+                    });
+
 //                    for (String bus_that_come_here : stopList.getBus_that_come_here()) {
 ////                    Toast.makeText(MainMapActivity.this,  bus_that_come_here, Toast.LENGTH_SHORT).show();
 //                        bus_to = Arrays.asList(bus_that_come_here);
