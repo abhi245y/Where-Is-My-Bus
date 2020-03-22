@@ -3,6 +3,7 @@ package com.abhi245y.whereismybus.models;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.List;
+import java.util.Map;
 
 public class StopList {
     private String bus_stop_name;

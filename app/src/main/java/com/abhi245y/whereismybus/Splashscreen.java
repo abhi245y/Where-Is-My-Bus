@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.ProgressBar;
 
 public class Splashscreen extends AppCompatActivity {
 
@@ -25,5 +26,8 @@ public class Splashscreen extends AppCompatActivity {
                 resume = 1;
             }
         }, 1000);
+
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        progressBar.setIndeterminate(true);
     }
 }

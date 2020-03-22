@@ -5,4 +5,6 @@
     <color name="colorAccent">#D81B60</color>
     <color name="darkGrey">#A9A9A9</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="Black">#202020</color>
+    <color name="Polyline_color">#2976C3</color>
 </resources>

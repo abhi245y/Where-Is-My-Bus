@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 
 public class BusListFragment extends Fragment {
 
+    private RecyclerView listView;
+
     public BusListFragment() {
         // Required empty public constructor
     }
@@ -28,6 +30,6 @@ public class BusListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RecyclerView listView = view.findViewById(R.id.list_view);
+         listView = view.findViewById(R.id.list_view);
     }
 }

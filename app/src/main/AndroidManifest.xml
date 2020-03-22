@@ -39,7 +39,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".MainMapActivity" />
+        <activity
+            android:name=".MainMapActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
         <activity android:name=".MainActivity" />
 
         <service

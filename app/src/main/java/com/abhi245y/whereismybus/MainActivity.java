@@ -15,9 +15,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.abhi245y.whereismybus.models.User;
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     public UserLocation mUserLocation;
     public FirebaseAuth.AuthStateListener mAuthListener;
+    private ProgressBar progressBar ;
 
 
     @Override
@@ -74,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         setupFirebaseAuth();
         getLocationPermission();
 
+
     }
 
     private void startLocationService() {
@@ -87,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 startService(serviceIntent);
             }
         }
+        goToMap();
     }
 
     private boolean isLocationServiceRunning() {
@@ -109,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
             try {
-                Toast.makeText(this, "If null", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "If null", Toast.LENGTH_SHORT).show();
                 String uidNull = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 Map<String, Object> userlcoation = new HashMap<>();
                 userlcoation.put("user_id", uidNull);
@@ -132,9 +137,9 @@ public class MainActivity extends AppCompatActivity {
                     Location location = task.getResult();
                     if (location != null) {
 
-                        Toast.makeText(MainActivity.this, "Not Null", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(MainActivity.this, "Not Null", Toast.LENGTH_SHORT).show();
                         GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-                      //  String uidNull = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        //  String uidNull = FirebaseAuth.getInstance().getCurrentUser().getUid();
                         Map<String, Object> userlcoation = new HashMap<>();
                         userlcoation.put("user_location", geoPoint);
                         db.collection("User Location").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).set(userlcoation);
@@ -280,9 +285,10 @@ public class MainActivity extends AppCompatActivity {
 //                            Map<String, Object> login = new HashMap<>();
 //                            login.put("User ID", uid);
 //                            db.collection("Logged in Users").document(uid).set(login);
+                            goToMap();
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(MainActivity.this, "SignIn failed." + task.getException(),
+                            Toast.makeText(MainActivity.this, "SignIn failed, Check Internet" + task.getException(),
                                     Toast.LENGTH_LONG).show();
                         }
                     }
@@ -300,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    Toast.makeText(MainActivity.this, "onAuthStateChanged:signed_in:" + user.getUid(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "onAuthStateChanged:signed_in:" + user.getUid(), Toast.LENGTH_SHORT).show();
                     // Toast.makeText(MainActivity.this, "Authenticated with: " + user.getUid(), Toast.LENGTH_SHORT).show();
 
                     FirebaseFirestore db = FirebaseFirestore.getInstance();

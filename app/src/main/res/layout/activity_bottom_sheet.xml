@@ -112,36 +112,44 @@
         android:layout_width="54dp"
         android:layout_height="54dp"
         android:layout_marginTop="37dp"
+        android:background="@drawable/ic_search_black_24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4"
-        android:background="@drawable/ic_search_black_24dp"/>
+        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+
+    <fragment
+        android:id="@+id/recycler_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/search"
+        tools:layout_editor_absoluteX="0dp" />
 
     <TextView
-        android:layout_margin="20dp"
         android:id="@+id/from_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_margin="20dp"
         android:text="From Location"
+        android:textColor="@color/quantum_grey"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search"
-        android:textColor="@color/quantum_grey"/>
+        app:layout_constraintTop_toBottomOf="@+id/recycler_fragment" />
 
     <TextView
         android:id="@+id/to_location"
-        android:layout_margin="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="20dp"
         android:layout_marginTop="24dp"
         android:text="To Location"
+        android:textColor="@color/quantum_grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/from_location"
-        android:textColor="@color/quantum_grey"/>
+        app:layout_constraintTop_toBottomOf="@+id/from_location" />
 
     <TextView
         android:id="@+id/commonbus"
@@ -150,19 +158,54 @@
         android:layout_margin="20dp"
         android:layout_marginTop="16dp"
         android:text="Common Bus"
+        android:textColor="@color/quantum_grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/to_location"
-        android:textColor="@color/quantum_grey"/>
+        app:layout_constraintTop_toBottomOf="@+id/to_location" />
+
+    <TextView
+        android:id="@+id/bus_Stops"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_marginTop="24dp"
+        android:hint="Bus Stops "
+        android:textColor="@color/quantum_grey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/commonbus" />
+
+    <TextView
+        android:id="@+id/bus_Stops_latlangs"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_marginTop="52dp"
+        android:hint="Bus Stop latlangs "
+        android:textColor="@color/quantum_grey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bus_Stops" />
+
+    <Button
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="116dp"
+        android:background="@android:color/holo_green_light"
+        android:onClick="clear"
+        android:text="Clear All"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bus_Stops_latlangs" />
 
     <!--    <fragment-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.0"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/search"-->
-<!--        app:layout_constraintVertical_bias="0.283"-->
-<!--        tools:context=".BusListFragment" />-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.0"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/search"-->
+    <!--        app:layout_constraintVertical_bias="0.283"-->
+    <!--        tools:context=".BusListFragment" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>
