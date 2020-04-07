@@ -1,0 +1,2 @@
+rootProject.name='Testing whb'
+include ':app'

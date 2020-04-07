@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Where Is My Bus</string>
+    <string name="title_activity_customer_map">Map</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="update">Update</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="todo">TODO</string>
+    <string name="where_is_my_bus">Where Is My bus</string>
+    <string name="from">From</string>
+    <string name="clear_all">Clear All</string>
+    <string name="from_location">From Location</string>
+    <string name="to_location">To Location</string>
+    <string name="to">To</string>
+    <string name="clear_text">Clear text</string>
+    <string name="google_api" templateMergeStrategy="preserve" translatable="false">AIzaSyCnkn0VsVabsU0rPFVq8Kh2bpHNIMu9Msc</string>
+    <string name="title_activity_main_map">Map</string>
+    <string name="wait_for_it">Wait For it</string>
+</resources>
