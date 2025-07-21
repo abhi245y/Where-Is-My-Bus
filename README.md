@@ -26,7 +26,7 @@ database which includes all the bus details and routes rates and time. Admin can
 add/delete information about a bus. Admin needs to login to the admin app in order to get
 access to the admin console. In their they can add bus details and add stop details.
 
-Admin WMB link: https://github.com/abhi245y/Admin-WMB
+   Admin WMB link: https://github.com/abhi245y/Admin-WMB
 
 2. User:
 
@@ -39,7 +39,7 @@ will show the selected buss’s live/approximate location. Also, there is featur
 planner where the user can set multiple stops/destination and the app will show the user a set
 of bus which the user has to take, with total cost of bus and individual fair of the bus.
 
-User App link:https://github.com/abhi245y/Where_Is_My_Bus
+   User App link:https://github.com/abhi245y/Where_Is_My_Bus
 
 
 3. Driver:
@@ -50,5 +50,5 @@ driver does not need to login/register. When the driver opens the app, he/she is
 enter the bus number. The app identifies the bus number form the database and updates its bus
 location on the database. The user app fetches the bus location from the database.
 
-Driver WHB link: https://github.com/abhi245y/Driver-WMB
+   Driver WHB link: https://github.com/abhi245y/Driver-WMB
 
